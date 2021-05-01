@@ -1,20 +1,22 @@
+import 'package:dhonkolhu/src/ui/resources.dart';
 import 'package:flutter/material.dart';
 
 class SectionDetails extends StatelessWidget {
   SectionDetails({
     Key? key,
     @required this.section,
-    @required this.content,
+    @required this.topic,
   }) : super(key: key);
   final String? section;
-  final String? content;
+  final Map<String, String>? topic;
 
   @override
   Widget build(BuildContext context) {
+    final values = topic?.values.toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          section ?? '',
+          '$section: ${topic?.keys.first}',
           style: TextStyle(
             fontSize: 15.0,
             color: Colors.pink,
@@ -22,7 +24,10 @@ class SectionDetails extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => Resources(
+                  resource: values?.last,
+                ))),
         child: Center(
           child: Icon(
             Icons.baby_changing_station_rounded,
@@ -30,19 +35,22 @@ class SectionDetails extends StatelessWidget {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 14.0, left: 12.0),
-            child: Text(
-              content ?? '',
-              style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.w100,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(18.0),
+              child: Text(
+                values?.first ?? '',
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w100,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

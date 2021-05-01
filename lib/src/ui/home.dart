@@ -1,103 +1,133 @@
+import 'package:dhonkolhu/src/database/db.dart';
+import 'package:dhonkolhu/src/model/section.dart';
 import 'package:dhonkolhu/src/ui/section_details.dart';
 import 'package:flutter/material.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  // load data to show on screen
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final List<Sections> _data = Db.data;
+
+  bool isENG = false;
+
   void _goTo(BuildContext context, Widget page) => Navigator.of(context).push(
       MaterialPageRoute(fullscreenDialog: true, builder: (context) => page));
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          leading: Icon(
-            Icons.child_friendly_rounded,
-            color: Colors.pink,
-            size: 30.0,
-          ),
-          title: Text(
-            'Dhonkolhu'.toUpperCase(),
-            style: TextStyle(
-              fontFamily: 'Freckle Face',
-              fontSize: 22.0,
-              color: Colors.pink,
-            ),
-          ),
-          centerTitle: true,
+      appBar: AppBar(
+        backgroundColor: Colors.pink[300],
+        leading: Icon(
+          Icons.child_friendly_rounded,
+          color: Colors.white,
+          size: 30.0,
         ),
-        body: ListView.builder(
-          itemCount: ContentData.data.length,
-          itemBuilder: (context, index) {
-            final _data = ContentData.data;
-            final _section = _data[index].keys.first;
-
-            final _listTileChildren = _data[index][_section]
-                ?.map(
-                  (content) => ListTile(
-                    title: Text(
-                      '※ $content',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 15.0,
-                      ),
-                    ),
-                    onTap: () => _goTo(
-                        context,
-                        SectionDetails(
-                          section: _section,
-                          content: content,
-                        )),
+        title: Text(
+          !isENG ? ' ދޮންކޮޅު' : 'Dhonkolhu',
+          style: TextStyle(
+            fontFamily: 'Freckle Face',
+            fontSize: 22.0,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          TextButton(
+              onPressed: () {
+                setState(() {
+                  if (!isENG) {
+                    setState(() {
+                      isENG = true;
+                    });
+                  } else {
+                    setState(() {
+                      isENG = false;
+                    });
+                  }
+                });
+              },
+              child: Text(
+                'ENG',
+                style: TextStyle(color: Colors.white),
+              ))
+        ],
+      ),
+      body: ListView.builder(
+        itemCount: _data.length,
+        itemBuilder: (context, index) {
+          final section = _data[index].section;
+          final topics = _data[index]
+              .topics
+              ?.map(
+                (Map<String, String> topic) => ListTile(
+                  title: Text(
+                    '${topic.keys.first}',
+                    style: TextStyle(fontSize: 14.0, color: Colors.grey[600]),
                   ),
-                )
-                .toList();
-
-            return ExpansionTile(
-              title: Text(
-                '$_section',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
+                  onTap: () => _goTo(
+                    context,
+                    SectionDetails(
+                      section: section,
+                      topic: topic,
+                    ),
+                  ),
                 ),
+              )
+              .toList();
+          return ExpansionTile(
+            subtitle: Text(
+              'Section: ${index + 1}',
+              style: TextStyle(
+                fontSize: 12.0,
+                fontWeight: FontWeight.bold,
               ),
-              children: _listTileChildren ?? [],
-            );
-          },
-        ));
+            ),
+            title: Text(
+              section ?? 'section',
+              style: TextStyle(
+                fontWeight: FontWeight.w300,
+                fontSize: 16.0,
+              ),
+            ),
+            children: topics ?? [],
+          );
+        },
+      ),
+    );
   }
 }
 
-class ContentData {
-  static final List<Map<String, List<String>>> data = [
-    {
-      'Section 1: Introduction': [
-        'Foundation: Let\'s master it',
-        'Baby\'s First Month: Eat, Sleep, Grow',
-        'Baby Month 2: Things Become Clearer',
-        'Baby Month 3: Patterns & Development',
-      ]
-    },
-    {
-      'Section 2: Growing So Fast: Monts 4-7': [
-        'Baby Month 4: Growing so Fast',
-        'Baby Month 5: Keeping Infections at Bay',
-        'Baby Month 6: The Half- a -Year Old Milestone',
-        'Baby Month 7: Scoot, Roll and Crawl',
-      ]
-    },
-    {
-      'Section 3: A new type of challenges to conquer': [
-        'Baby Month 8: Growth Concerns',
-        'Baby Month 9: Fussy Baby & How to Soothe Your Munchkin',
-        'Baby Month 10: Building the Right Habits',
-        'Baby Month 11: All Grown Up',
-      ]
-    },
-    {
-      'Section 4: A Wonderful Milestone, You Dit it!': [
-        'Baby Month 12: Happy 1st Birthday!',
-        'On-Going Skill Development',
-        'Sunny or Rainy - Let\'s do it Better!',
-        'Taking care of your baby when they are sick',
-      ]
-    },
-  ];
-}
+// final _section = _data[index].section;
+// // final _topics = _data[index].topics;
+// // final _section = _data[index].section;
+// //
+// final topics = _data[index]
+
+// final _listTileChildren = _data[index].topics?.map<String, String>(
+//   (String content) => ListTile(
+//     title: Text(
+//       '$content',
+//       textAlign: TextAlign.left,
+//       style: TextStyle(fontSize: 15.0),
+//     ),
+//     leading: Icon(
+//       Icons.bubble_chart_outlined,
+//       color: Colors.blue[100],
+//     ),
+//     subtitle: Text(
+//       '5min read',
+//       style: TextStyle(fontSize: 9.0, color: Colors.grey),
+//     ),
+//     dense: true,
+//     horizontalTitleGap: 1.0,
+//     onTap: () => _goTo(
+//       context,
+//       SectionDetails(section: _section, content: content),
+//     ),
+//   ),
+// );
