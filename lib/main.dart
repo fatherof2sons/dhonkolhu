@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.white,
         accentColor: Colors.pink,
       ),
-      home: Home(),
+      home: Home.create(context),
     );
   }
 }
