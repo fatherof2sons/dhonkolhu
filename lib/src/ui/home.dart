@@ -1,17 +1,10 @@
-import 'package:dhonkolhu/src/blocs/home_bloc.dart';
 import 'package:dhonkolhu/src/database/db.dart';
 import 'package:dhonkolhu/src/model/section.dart';
 import 'package:dhonkolhu/src/ui/section_details.dart';
+import 'package:dhonkolhu/src/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
-  static Widget create(BuildContext context) => Provider<HomeBloc>(
-        create: (_) => HomeBloc(),
-        child: Home(),
-        dispose: (context, bloc) => bloc.dispose(),
-      );
-
   final List<Sections> _data = Db.sections;
 
   void _goTo(BuildContext context, Widget page) => Navigator.of(context).push(
@@ -19,92 +12,51 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of<HomeBloc>(context);
-    return StreamBuilder<bool>(
-      stream: bloc.isEngStream,
-      initialData: true,
-      builder: (context, snapshot) {
-        final data = snapshot.data;
+    return Scaffold(
+      appBar: AppBar(
+        leading: Icon(Icons.child_friendly),
+        title: Text(
+          'ދޮންކޮޅު',
+          style: TextStyle(
+            fontFamily: 'mvTyper',
+            fontSize: 20.0,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.pink[300],
+      ),
+      body: ListView.builder(
+        itemCount: _data.length,
+        itemBuilder: (context, index) {
+          final String? _sectionName = _data[index].section;
+          final List<ListTile>? _topics =
+              _data[index].topics?.map((Map<String, Set<String>> topic) {
+            final String _topicName = topic.keys.first;
 
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.pink[300],
-            leading: Icon(
-              Icons.child_friendly_rounded,
-              color: Colors.white,
-              size: 30.0,
-            ),
-            title: Text(
-              data == false ? ' ދޮންކޮޅު' : 'Dhonkolhu',
-              style: TextStyle(
-                fontFamily: 'Freckle Face',
-                fontSize: 22.0,
-                color: Colors.white,
+            return ListTile(
+              focusColor: Colors.pink[100],
+              dense: true,
+              title: Padding(
+                padding: const EdgeInsets.only(right: 20.0),
+                child: CustomText(
+                  text: '$_topicName',
+                ),
               ),
-            ),
-            centerTitle: true,
-            actions: [
-              TextButton(
-                onPressed: () =>
-                    data == false ? bloc.setIsENG(true) : bloc.setIsENG(false),
-                child: Text(
-                  data == false ? 'ENG' : 'DHI',
-                  style: TextStyle(color: Colors.white),
-                ),
-              )
-            ],
-          ),
-          body: ListView.builder(
-            itemCount: _data.length,
-            itemBuilder: (context, index) {
-              final List<String>? _sectionName = _data[index].section;
-              final _topics = _data[index]
-                  .topics
-                  ?.map((Map<List<String>, List<String>> topic) {
-                final List<String> _topicName = topic.keys.first;
-                final String _topic =
-                    data == true ? _topicName.first : _topicName.last;
-                return ListTile(
-                  // tileColor: Colors.brown,
-                  title: Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child: Text(
-                      '$_topic',
-                      style: TextStyle(
-                        fontSize: 13.0,
-                        letterSpacing: 1.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black54,
-                      ),
-                      textAlign:
-                          data == true ? TextAlign.left : TextAlign.right,
-                    ),
-                  ),
-                  onTap: () => _goTo(
-                      context,
-                      SectionDetails(
-                        topic: topic,
-                        isENG: data,
-                      )),
-                );
-              }).toList();
+              onTap: () => _goTo(context, SectionDetails(topic: topic)),
+            );
+          }).toList();
 
-              return ExpansionTile(
-                title: Text(
-                  data == true ? '${_sectionName?[0]}' : '${_sectionName?[1]}',
-                  textAlign: data == true ? TextAlign.left : TextAlign.right,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16.0,
-                    color: Colors.black87,
-                  ),
-                ),
-                children: _topics ?? [],
-              );
-            },
-          ),
-        );
-      },
+          return ExpansionTile(
+            collapsedBackgroundColor: Colors.pink[100],
+            backgroundColor: Colors.pink[100],
+            title: CustomText(
+              text: _sectionName ?? 'section_name',
+            ),
+            children: _topics ?? [Text('Something went wrong')],
+          );
+        },
+      ),
     );
   }
 }

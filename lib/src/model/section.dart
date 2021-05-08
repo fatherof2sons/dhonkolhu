@@ -5,6 +5,6 @@ class Sections {
     @required this.section,
     @required this.topics,
   });
-  final List<String>? section;
-  final List<Map<List<String>, List<String>>>? topics;
+  final String? section;
+  final List<Map<String, Set<String>>>? topics;
 }

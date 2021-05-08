@@ -1,4 +1,4 @@
-import 'package:dhonkolhu/src/ui/home.dart';
+import 'package:dhonkolhu/src/ui/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.white,
         accentColor: Colors.pink,
       ),
-      home: Home.create(context),
+      home: SplashScreen(),
     );
   }
 }
